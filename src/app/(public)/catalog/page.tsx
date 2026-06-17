@@ -1,29 +1,35 @@
 import CatalogClient from '@/components/public/CatalogClient';
+import { supabase } from '@/lib/supabaseClient';
 
 export const revalidate = 60; // ISR 60 seconds
 
 export default async function CatalogPage() {
-  const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000/api/v1';
-  
-  let products = [];
-  let categories = [];
+  let products: any[] = [];
+  let categories: any[] = [];
   let hasError = false;
 
   try {
     const [prodRes, catRes] = await Promise.all([
-      fetch(`${API_URL}/catalog`, { next: { revalidate: 60 } }),
-      fetch(`${API_URL}/commodities`, { next: { revalidate: 60 } })
+      supabase.from('products').select('*'),
+      supabase.from('categories').select('*')
     ]);
 
-    console.log("Status Catalog:", prodRes.status, "| Status Categories:", catRes.status);
+    if (prodRes.error || catRes.error) throw new Error('Failed to fetch data from Supabase');
 
-    if (!prodRes.ok || !catRes.ok) throw new Error('Failed to fetch data');
+    // Map snake_case DB columns → camelCase props expected by CatalogClient
+    products = (prodRes.data || []).map((p: any) => ({
+      id: p.id,
+      name: p.name_en || p.name || '',
+      categoryId: p.category_id || '',
+      description: p.description_en || p.description || '',
+      moq: p.moq || '',
+      imageUrl: p.image_url || '',
+    }));
 
-    const prodData = await prodRes.json();
-    const catData = await catRes.json();
-
-    products = prodData.data || [];
-    categories = catData.data || [];
+    categories = (catRes.data || []).map((c: any) => ({
+      id: c.id,
+      name: c.name_en || c.name || '',
+    }));
   } catch (error) {
     console.error("Error fetching catalog:", error);
     hasError = true;

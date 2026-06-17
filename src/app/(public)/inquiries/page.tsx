@@ -127,7 +127,7 @@ export default function InquiriesPage() {
                   className="w-full bg-white text-canvas font-semibold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-white/90 transition-all disabled:opacity-70 group"
                 >
                   {isSubmitting ? (
-                    <span className="flex items-center gap-2">Processing <motion.span animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}><ArrowRight className="w-4 h-4" /></motion.span></span>
+                    <span className="flex items-center gap-2">Processing <motion.span animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" as any }}><ArrowRight className="w-4 h-4" /></motion.span></span>
                   ) : (
                     <span className="flex items-center gap-2">Submit Inquiry <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /></span>
                   )}

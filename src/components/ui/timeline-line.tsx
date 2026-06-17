@@ -44,7 +44,7 @@ export function TimelineLine({ scrollYProgress }: TimelineLineProps) {
           y: "-100%", // Make the bottom of the star touch the head of the line
         }}
         animate={{ scale: [1, 1.4, 1] }}
-        transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" as any }}
       />
       
       {/* Trailing tail */}

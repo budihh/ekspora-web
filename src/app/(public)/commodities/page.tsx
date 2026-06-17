@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { supabase } from '@/lib/supabaseClient';
 
 export const revalidate = 60;
 
@@ -10,15 +11,20 @@ type Category = {
 };
 
 export default async function CommoditiesPage() {
-  const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000/api/v1';
   let categories: Category[] = [];
   let hasError = false;
 
   try {
-    const res = await fetch(`${API_URL}/commodities`, { next: { revalidate: 60 } });
-    if (!res.ok) throw new Error('Failed to fetch commodities');
-    const data = await res.json();
-    categories = data.data || [];
+    const { data, error } = await supabase.from('categories').select('*');
+    if (error) throw new Error('Failed to fetch commodities from Supabase: ' + error.message);
+
+    // Map snake_case DB columns → camelCase props used in the template
+    categories = (data || []).map((c: any) => ({
+      id: c.id,
+      name: c.name_en || c.name || '',
+      slug: c.slug || '',
+      description: c.description_en || c.description || '',
+    }));
   } catch (error) {
     console.error('Error fetching commodities:', error);
     hasError = true;

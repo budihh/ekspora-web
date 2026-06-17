@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { supabase } from '@/lib/supabaseClient';
 
 export const revalidate = 60;
 
@@ -12,16 +13,21 @@ type NewsItem = {
 };
 
 export default async function NewsPage() {
-  const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000/api/v1';
-  
   let newsList: NewsItem[] = [];
   let hasError = false;
 
   try {
-    const res = await fetch(`${API_URL}/news`, { next: { revalidate: 60 } });
-    if (!res.ok) throw new Error('Failed to fetch news');
-    const data = await res.json();
-    newsList = data.data || [];
+    const { data, error } = await supabase.from('news').select('*');
+    if (error) throw new Error('Failed to fetch news from Supabase: ' + error.message);
+
+    // Map snake_case DB columns → camelCase props used in the template
+    newsList = (data || []).map((n: any) => ({
+      id: n.id,
+      title: n.title_en || n.title || '',
+      content: n.content_en || n.content || '',
+      date: n.date_en || n.date || '',
+      imageUrl: n.image_url || n.imageUrl || '',
+    }));
   } catch (error) {
     console.error("Error fetching news:", error);
     hasError = true;
@@ -40,7 +46,7 @@ export default async function NewsPage() {
     <div className="pt-32 pb-24 min-h-screen">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <h1 className="text-display font-display font-bold bg-gradient-to-br from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent tracking-tighter mb-4">
-          News & Updates
+          News &amp; Updates
         </h1>
         <p className="text-body text-text-secondary mb-12">
           Latest information and insights from Ekspora.

@@ -260,7 +260,7 @@ export default function PortfolioPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          transition={{ duration: 0.8, ease: "easeOut" as any }}
           className="relative z-10 flex flex-col items-center container mx-auto"
         >
           <div className="mb-10 md:mb-16">

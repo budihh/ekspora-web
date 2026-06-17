@@ -23,7 +23,7 @@ const cardVariants = cva(
 );
 
 // Interface for component props
-export interface BlogPostCardProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof cardVariants> {
+export interface BlogPostCardProps extends React.ComponentPropsWithoutRef<typeof motion.div>, VariantProps<typeof cardVariants> {
   tag: string;
   date: string;
   title: string;
@@ -42,7 +42,7 @@ const BlogPostCard = React.forwardRef<HTMLDivElement, BlogPostCardProps>(
         y: -5,
         transition: {
           duration: 0.3,
-          ease: 'easeInOut',
+          ease: 'easeInOut' as any,
         },
       },
     };

@@ -1,4 +1,5 @@
 import AboutClient from '@/components/public/AboutClient';
+import { supabase } from '@/lib/supabaseClient';
 
 export const revalidate = 60;
 
@@ -9,18 +10,16 @@ export default async function AboutPage() {
 
   try {
     const [resProfile, resTeam] = await Promise.all([
-      fetch(`${API_URL}/company`, { next: { revalidate: 60 } }),
-      fetch(`${API_URL}/team`, { next: { revalidate: 60 } })
+      supabase.from('company').select('*').maybeSingle(),
+      supabase.from('teams').select('*')
     ]);
     
-    if (resProfile.ok) {
-      const data = await resProfile.json();
-      profile = data.data || null;
+    if (!resProfile.error && resProfile.data) {
+      profile = resProfile.data;
     }
     
-    if (resTeam.ok) {
-      const data = await resTeam.json();
-      team = data.data || [];
+    if (!resTeam.error && resTeam.data) {
+      team = resTeam.data;
     }
   } catch (error) {
     console.error('Error fetching about data:', error);

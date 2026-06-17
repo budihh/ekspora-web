@@ -28,7 +28,7 @@ function ProductImage({ product }: { product: Product }) {
   if (imgError || !finalUrl) {
     return (
       <div className="w-12 h-12 bg-surface-elevated rounded-lg border border-border-hairline flex items-center justify-center font-display font-bold text-text-muted text-small uppercase">
-        {product.name.charAt(0)}
+        {(product.name || 'P').charAt(0)}
       </div>
     );
   }
@@ -62,8 +62,9 @@ export default function CatalogClient({ products, categories }: { products: Prod
 
   const filteredProducts = products.filter(product => {
     const matchCategory = activeCategoryId === 'all' || product.categoryId === activeCategoryId;
-    const matchSearch = product.name.toLowerCase().includes(debouncedSearch.toLowerCase()) || 
-                        product.id.toLowerCase().includes(debouncedSearch.toLowerCase());
+    const searchLower = debouncedSearch.toLowerCase();
+    const matchSearch = (product.name || '').toLowerCase().includes(searchLower) || 
+                        (product.id || '').toLowerCase().includes(searchLower);
     return matchCategory && matchSearch;
   });
 
@@ -74,7 +75,7 @@ export default function CatalogClient({ products, categories }: { products: Prod
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      transition={{ duration: 0.5, ease: "easeOut" as any }}
       className="pt-32 pb-24 min-h-screen"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">

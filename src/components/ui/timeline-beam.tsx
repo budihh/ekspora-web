@@ -23,11 +23,11 @@ export const TimelineBeam = () => {
     [headPosition, tailPosition],
     ([head, tail]) => {
       if ((head as number) > (tail as number)) {
-        // Scroll turun: ekor tertinggal di atas. Top point harus naik 32px untuk base height.
-        return `calc(${tail * 100}% - 32px)`;
+        // Scroll turun: ekor tertinggal di atas. Top point harus naik 32px untuk base height
+        return `calc(${(tail as number) * 100}% - 32px)`;
       } else {
         // Scroll naik: ekor tertinggal di bawah. Top point tepat di kepala.
-        return `${head * 100}%`;
+        return `${(head as number) * 100}%`;
       }
     }
   );

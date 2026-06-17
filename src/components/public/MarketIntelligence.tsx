@@ -133,7 +133,7 @@ export default function MarketIntelligence() {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 1, ease: "easeInOut" }}
+          transition={{ duration: 1, ease: "easeInOut" as any }}
           className={cn("w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] rounded-full blur-[120px] mix-blend-screen opacity-40 transition-colors duration-1000", activeTab.glowClass)}
         />
       </div>
@@ -253,7 +253,7 @@ export default function MarketIntelligence() {
                       initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
                       animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                       exit={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
-                      transition={{ duration: 0.3, ease: "easeOut" }}
+                      transition={{ duration: 0.3, ease: "easeOut" as any }}
                       className="absolute inset-0 w-full h-full"
                     >
                       {activeTabId === "rattan" && (

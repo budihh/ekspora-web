@@ -46,7 +46,7 @@ export async function createProduct(data: ProductFormValues) {
     return { success: true, message: "Produk berhasil ditambahkan" };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: "Validasi gagal", details: error.errors };
+      return { success: false, error: "Validasi gagal", details: error.issues };
     }
     console.error("Error creating product:", error);
     return { success: false, error: "Terjadi kesalahan internal server" };

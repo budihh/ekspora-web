@@ -1254,7 +1254,7 @@ export function MapArc<T extends MapArcDatum = MapArcDatum>({
     return Math.max(base + ARC_HIT_PADDING, ARC_HIT_MIN_WIDTH);
   }, [paint]);
 
-  const geoJSON = useMemo<GeoJSON.FeatureCollection<GeoJSON.LineString>>(
+  const geoJSON = useMemo<any>(
     () => ({
       type: "FeatureCollection",
       features: data.map((arc) => {

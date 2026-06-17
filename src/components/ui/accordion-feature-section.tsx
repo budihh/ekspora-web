@@ -4,9 +4,9 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
-const fadeUpVariant = { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] } } };
+const fadeUpVariant = { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [] as any } } };
 const staggerContainer = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.2 } } };
-const scaleInVariant = { hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1, transition: { duration: 1, ease: [0.25, 0.1, 0.25, 1] } } };
+const scaleInVariant = { hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1, transition: { duration: 1, ease: [] as any } } };
 
 export interface FeatureItem {
   id: number;
@@ -98,7 +98,7 @@ export function AccordionFeatureSection() {
                         initial={{ height: 0, opacity: 0, marginTop: 0 }}
                         animate={{ height: "auto", opacity: 1, marginTop: 16 }}
                         exit={{ height: 0, opacity: 0, marginTop: 0 }}
-                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        transition={{ duration: 0.4, ease: [] as any }}
                         className="overflow-hidden"
                       >
                         <p className="text-lg text-zinc-400 leading-relaxed pr-8">
@@ -129,7 +129,7 @@ export function AccordionFeatureSection() {
                   initial={{ opacity: 0, filter: "blur(10px)", scale: 1.05 }}
                   animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
                   exit={{ opacity: 0, filter: "blur(10px)", scale: 0.95 }}
-                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 0.6, ease: [] as any }}
                   className="absolute inset-0 w-full h-full object-cover"
                 />
               </AnimatePresence>

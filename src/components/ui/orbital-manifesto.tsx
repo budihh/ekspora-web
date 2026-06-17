@@ -117,7 +117,7 @@ export function OrbitalManifesto() {
               initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, y: -20, filter: "blur(4px)" }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
+              transition={{ duration: 0.4, ease: "easeOut" as any }}
               className="flex flex-col h-full"
             >
               {/* Header Badge */}
@@ -156,7 +156,7 @@ export function OrbitalManifesto() {
                       className="h-full bg-gradient-to-r from-zinc-500 to-white"
                       initial={{ width: 0 }}
                       animate={{ width: `${activeItem.energy}%` }}
-                      transition={{ duration: 1, ease: "easeOut" }}
+                      transition={{ duration: 1, ease: "easeOut" as any }}
                     />
                   </div>
                 </div>
