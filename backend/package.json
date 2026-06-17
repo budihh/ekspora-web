@@ -1,0 +1,23 @@
+{
+  "name": "ekspora-backend",
+  "version": "1.0.0",
+  "description": "Ekspora Backend API Server",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "dotenv": "^16.6.0",
+    "drizzle-orm": "^0.44.2",
+    "postgres": "^3.4.7"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.0",
+    "tsx": "^4.19.4"
+  }
+}
