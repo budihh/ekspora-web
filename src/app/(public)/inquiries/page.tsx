@@ -1,17 +1,52 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Mail, Phone, Send, ArrowRight } from "lucide-react";
+import { submitInquiry } from "@/app/actions/sendInquiry";
+import { getCategories } from "@/app/actions/getCategories";
 
 export default function InquiriesPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState<{ type: "success" | "error" | null; message: string }>({ type: null, message: "" });
+  const [categories, setCategories] = useState<{ id: string; name_en: string; slug: string }[]>([]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getCategories();
+        if (data && Array.isArray(data)) {
+          setCategories(data as any);
+        }
+      } catch (err) {
+        console.error("Failed to fetch categories:", err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => setIsSubmitting(false), 2000);
+    setStatus({ type: null, message: "" });
+    
+    const formElement = e.currentTarget;
+    const formData = new FormData(formElement);
+    
+    try {
+      const result = await submitInquiry(formData);
+      
+      if (result.error) {
+        setStatus({ type: "error", message: result.error });
+      } else {
+        setStatus({ type: "success", message: "Pesan berhasil dikirim. Kami akan segera menghubungi Anda." });
+        formElement?.reset();
+      }
+    } catch (err) {
+      setStatus({ type: "error", message: "Terjadi kesalahan saat memproses permintaan." });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -91,34 +126,35 @@ export default function InquiriesPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-text-secondary">Company Name</label>
-                    <input type="text" required className="w-full bg-canvas/50 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-accent transition-colors" placeholder="e.g. Acme Corp" />
+                    <input type="text" name="companyName" required className="w-full bg-canvas/50 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-accent transition-colors" placeholder="e.g. Acme Corp" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-text-secondary">Work Email</label>
-                    <input type="email" required className="w-full bg-canvas/50 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-accent transition-colors" placeholder="buyer@acme.com" />
+                    <input type="email" name="email" required className="w-full bg-canvas/50 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-accent transition-colors" placeholder="buyer@acme.com" />
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-text-secondary">Commodity of Interest</label>
-                  <select className="w-full bg-canvas/50 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-accent transition-colors appearance-none">
-                    <option value="" disabled selected>Select a category...</option>
-                    <option value="spices">Spices & Herbs</option>
-                    <option value="coffee">Coffee Beans</option>
-                    <option value="coconut">Coconut Products</option>
-                    <option value="cocoa">Cocoa</option>
-                    <option value="other">Other / Multiple</option>
+                  <select name="commodity" defaultValue="" className="w-full bg-canvas/50 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-accent transition-colors appearance-none">
+                    <option value="" disabled>Select a category...</option>
+                    {categories.map((category) => (
+                      <option key={category.slug} value={category.slug}>
+                        {category.name_en}
+                      </option>
+                    ))}
+                    <option value="other">Other / General Inquiry</option>
                   </select>
                 </div>
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-text-secondary">Estimated Volume (MOQ)</label>
-                  <input type="text" className="w-full bg-canvas/50 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-accent transition-colors" placeholder="e.g. 1 FCL 20ft" />
+                  <input type="text" name="volume" className="w-full bg-canvas/50 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-accent transition-colors" placeholder="e.g. 1 FCL 20ft" />
                 </div>
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-text-secondary">Message / Specifications</label>
-                  <textarea rows={4} className="w-full bg-canvas/50 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-accent transition-colors resize-none" placeholder="Provide any specific requirements, target port, or questions..."></textarea>
+                  <textarea name="message" rows={4} className="w-full bg-canvas/50 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-accent transition-colors resize-none" placeholder="Provide any specific requirements, target port, or questions..."></textarea>
                 </div>
 
                 <button 
@@ -127,11 +163,22 @@ export default function InquiriesPage() {
                   className="w-full bg-white text-canvas font-semibold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-white/90 transition-all disabled:opacity-70 group"
                 >
                   {isSubmitting ? (
-                    <span className="flex items-center gap-2">Processing <motion.span animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" as any }}><ArrowRight className="w-4 h-4" /></motion.span></span>
+                    <span className="flex items-center gap-2">
+                      <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Sending...
+                    </span>
                   ) : (
                     <span className="flex items-center gap-2">Submit Inquiry <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /></span>
                   )}
                 </button>
+                {status.type && (
+                  <div className={`p-4 rounded-xl text-sm font-medium ${status.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
+                    {status.message}
+                  </div>
+                )}
               </form>
             </div>
           </motion.div>

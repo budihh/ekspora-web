@@ -176,23 +176,26 @@ export default function SectorsPage() {
   if (!categories || categories.length === 0) return null;
 
   return (
-    <div className="min-h-screen bg-canvas pt-32 pb-24">
+    <div className="min-h-screen bg-canvas pt-32">
       {/* Header */}
-      <section className="container mx-auto px-4 md:px-6 mb-24">
+      <section className="min-h-[80vh] flex flex-col justify-center items-center text-center relative overflow-hidden px-6 mb-24">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-accent/10 blur-[150px] rounded-full pointer-events-none -z-10" />
+        
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="max-w-3xl"
+          className="w-full flex flex-col items-center"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-6">
-            <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-            <span className="text-xs font-medium text-white/80 uppercase tracking-wider">Business Sectors</span>
+          <div className="mb-6">
+            <span className="text-sm font-medium tracking-widest text-zinc-400 uppercase">
+              Business Sectors
+            </span>
           </div>
-          <h1 className="text-5xl md:text-7xl font-display font-bold bg-linear-to-br from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent tracking-tighter mb-6">
+          <h1 className="text-5xl md:text-8xl font-display font-bold tracking-tighter bg-gradient-to-br from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent mb-8 max-w-5xl mx-auto">
             Global Commodity Lines
           </h1>
-          <p className="text-xl text-text-secondary leading-relaxed">
+          <p className="text-xl md:text-2xl text-zinc-400 max-w-3xl leading-relaxed mx-auto">
             Our strategic business units are categorized to streamline your procurement process, ensuring you receive the exact specifications your industry demands.
           </p>
         </motion.div>

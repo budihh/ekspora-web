@@ -12,7 +12,7 @@ export default async function AboutPage() {
     const [resProfile, resTeam] = await Promise.all([
       supabase.from('company').select('*').maybeSingle(),
       supabase.from('teams').select('*')
-    ]);
+    ]) as [any, any];
     
     if (!resProfile.error && resProfile.data) {
       profile = resProfile.data;

@@ -32,24 +32,44 @@ interface Product {
 // SUB-COMPONENT: CATEGORY ROW
 // ---------------------------
 const CategoryRow = ({ category, products }: { category: Category, products: Product[] }) => {
-  const [activeId, setActiveId] = useState<string | null>(products[0]?.id || null);
+  const initialIndex = products.length > 1 ? 1 : 0;
+  const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const [activeId, setActiveId] = useState<string | null>(products[initialIndex]?.id || null);
   const railRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const hasMounted = useRef(false);
+
+  // Scroll to card at index 1 on mount
+  useLayoutEffect(() => {
+    if (hasMounted.current) return;
+    hasMounted.current = true;
+    const target = cardRefs.current[initialIndex];
+    if (target && railRef.current) {
+      requestAnimationFrame(() => {
+        const rail = railRef.current;
+        if (rail) {
+          const targetCenter = target.offsetLeft + (target.offsetWidth / 2);
+          const railCenter = rail.offsetWidth / 2;
+          rail.scrollLeft = targetCenter - railCenter;
+        }
+      });
+    }
+  }, [products, initialIndex]);
 
   // Scroll listener for "Cinematic Focus" Center-Lock Logic
-
   useEffect(() => {
-    let currentActiveId = products[0]?.id || null;
+    let currentActiveId = products[initialIndex]?.id || null;
 
     const handleScroll = () => {
       if (!railRef.current || cardRefs.current.length === 0) return;
       const rail = railRef.current;
       
       const containerCenter = rail.offsetWidth / 2;
-      let closestId = null;
+      let closestId: string | null = null;
+      let closestIndex = 0;
       let minDistance = Infinity;
 
-      cardRefs.current.forEach((card) => {
+      cardRefs.current.forEach((card, idx) => {
         if (!card) return;
         const cardCenter = card.offsetLeft + (card.offsetWidth / 2) - rail.scrollLeft;
         const distance = Math.abs(cardCenter - containerCenter);
@@ -57,12 +77,14 @@ const CategoryRow = ({ category, products }: { category: Category, products: Pro
         if (distance < minDistance) {
           minDistance = distance;
           closestId = card.getAttribute("data-id");
+          closestIndex = idx;
         }
       });
 
       if (closestId && closestId !== currentActiveId) {
         currentActiveId = closestId;
         setActiveId(closestId);
+        setActiveIndex(closestIndex);
       }
     };
 
@@ -75,7 +97,7 @@ const CategoryRow = ({ category, products }: { category: Category, products: Pro
     return () => {
       if (rail) rail.removeEventListener("scroll", handleScroll);
     };
-  }, [products]);
+  }, [products, initialIndex]);
 
   if (!products || products.length === 0) return null;
 
@@ -102,6 +124,9 @@ const CategoryRow = ({ category, products }: { category: Category, products: Pro
         >
           {products.map((item, index) => {
             const isActive = activeId === item.id;
+            const distance = Math.abs(index - activeIndex);
+            // Only show the active card and its immediate neighbors
+            const isVisible = distance <= 1;
 
             return (
               <div
@@ -117,15 +142,22 @@ const CategoryRow = ({ category, products }: { category: Category, products: Pro
                   ${
                     isActive
                       ? "scale-100 brightness-100 z-20 shadow-[0_0_40px_rgba(255,255,255,0.05)] border border-white/10"
-                      : "scale-[0.88] brightness-[0.4] z-10 border border-transparent"
+                      : isVisible
+                        ? "scale-[0.88] brightness-[0.4] z-10 border border-transparent"
+                        : "scale-[0.80] brightness-0 z-0 border border-transparent opacity-0 pointer-events-none"
                   }
                 `}
                 onClick={() => {
-                  cardRefs.current[index]?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "nearest",
-                    inline: "center",
-                  });
+                  const target = cardRefs.current[index];
+                  const rail = railRef.current;
+                  if (target && rail) {
+                    const targetCenter = target.offsetLeft + (target.offsetWidth / 2);
+                    const railCenter = rail.offsetWidth / 2;
+                    rail.scrollTo({
+                      left: targetCenter - railCenter,
+                      behavior: "smooth"
+                    });
+                  }
                   if (isActive) {
                     window.location.href = `/inquiries?product=${encodeURIComponent(item.name_en)}`;
                   }
@@ -256,24 +288,26 @@ export default function PortfolioPage() {
     <div className="bg-[#050505] min-h-screen text-zinc-200 selection:bg-white/30 font-sans">
       
       {/* SECTION 1: HERO TITLE */}
-      <section className="pt-32 pb-8 px-4 md:px-6 text-center relative overflow-hidden mb-8">
+      <section className="min-h-screen flex flex-col justify-center items-center text-center relative overflow-hidden px-6 mb-8">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-accent/10 blur-[150px] rounded-full pointer-events-none -z-10" />
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" as any }}
-          className="relative z-10 flex flex-col items-center container mx-auto"
+          className="w-full flex flex-col items-center"
         >
-          <div className="mb-10 md:mb-16">
-            <p className="text-zinc-400 text-sm font-semibold tracking-widest uppercase mb-3">
+          <div className="mb-6">
+            <span className="text-sm font-medium tracking-widest text-zinc-400 uppercase">
               Global Supply Chain
-            </p>
-            <h1 className="text-3xl md:text-4xl font-light text-white leading-tight tracking-tight mb-3">
-              Curated Products for <span className="font-semibold bg-linear-to-r from-zinc-200 via-zinc-400 to-zinc-500 bg-clip-text text-transparent">International Markets</span>
-            </h1>
-            <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
-              Premium commodities, ethically sourced. Crafted for global excellence.
-            </p>
+            </span>
           </div>
+          <h1 className="text-5xl md:text-8xl font-display font-bold tracking-tighter bg-gradient-to-br from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent mb-8 max-w-5xl mx-auto">
+            Curated Products for International Markets
+          </h1>
+          <p className="text-xl md:text-2xl text-zinc-400 max-w-3xl leading-relaxed mx-auto">
+            Premium commodities, ethically sourced. Crafted for global excellence.
+          </p>
         </motion.div>
       </section>
 

@@ -1,7 +1,6 @@
 "use client";
 
-import { motion, useScroll } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
 import { Leaf, ShieldCheck, Scale, Users, Mountain, Globe, TreePine, Flame, Droplets } from "lucide-react";
 import { DisplayCards } from "@/components/ui/display-cards";
 import { BentoGrid, type BentoItem } from "@/components/ui/bento-grid";
@@ -10,11 +9,6 @@ import { OrbitalManifesto } from "@/components/ui/orbital-manifesto";
 import Image from "next/link"; // Not next/image, wait, I'll use standard img tag for simplicity with external urls
 
 export default function HeritagePage() {
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start 80%", "end 50%"],
-  });
 
   const staggerContainer = {
     hidden: { opacity: 0 },
@@ -25,31 +19,28 @@ export default function HeritagePage() {
   };
 
   const fadeUpVariant = {
-    hidden: { opacity: 0, y: 40, filter: "blur(10px)" },
+    hidden: { opacity: 0, y: 40 },
     visible: {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
       transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] as any },
     },
   };
 
   const fadeLeftVariant = {
-    hidden: { opacity: 0, x: -40, filter: "blur(10px)" },
+    hidden: { opacity: 0, x: -40 },
     visible: {
       opacity: 1,
       x: 0,
-      filter: "blur(0px)",
       transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] as any },
     },
   };
 
   const fadeRightVariant = {
-    hidden: { opacity: 0, x: 40, filter: "blur(10px)" },
+    hidden: { opacity: 0, x: 40 },
     visible: {
       opacity: 1,
       x: 0,
-      filter: "blur(0px)",
       transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] as any },
     },
   };
@@ -137,7 +128,7 @@ export default function HeritagePage() {
         
         <motion.h1 
           variants={fadeUpVariant}
-          className="text-5xl md:text-8xl font-display font-bold tracking-tighter bg-gradient-to-br from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent mb-8 max-w-5xl"
+          className="text-5xl md:text-8xl font-display font-bold tracking-tighter bg-linear-to-br from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent mb-8 max-w-5xl"
         >
           Harnessing the Archipelago's Boundless Resources.
         </motion.h1>
@@ -239,7 +230,7 @@ export default function HeritagePage() {
             viewport={{ once: true, margin: "-100px" }}
             variants={fadeUpVariant}
           >
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-center bg-gradient-to-br from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent mb-20 tracking-tighter">
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-center bg-linear-to-br from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent mb-20 tracking-tighter">
               A Trajectory of Growth
             </h2>
           </motion.div>
@@ -270,7 +261,7 @@ export default function HeritagePage() {
             ].map((step, idx) => (
               <motion.div key={idx} variants={fadeUpVariant} className="relative">
                 {/* Glowing Dot */}
-                <div className="absolute -left-[41px] md:-left-[73px] top-1.5 w-5 h-5 rounded-full bg-zinc-950 border-4 border-zinc-700 shadow-[0_0_15px_rgba(255,255,255,0.2)]" />
+                <div className="absolute left-[-41px] md:left-[-73px] top-1.5 w-5 h-5 rounded-full bg-zinc-950 border-4 border-zinc-700 shadow-[0_0_15px_rgba(255,255,255,0.2)]" />
                 <h3 className="text-2xl font-bold text-white mb-3">{step.title}</h3>
                 <p className="text-zinc-400 text-lg leading-relaxed">{step.desc}</p>
               </motion.div>
@@ -312,7 +303,7 @@ export default function HeritagePage() {
               <motion.div 
                 key={idx} 
                 variants={fadeUpVariant}
-                className="relative overflow-hidden rounded-2xl bg-zinc-900/40 border border-white/5 aspect-[3/4]"
+                className="relative overflow-hidden rounded-2xl bg-zinc-900/40 border border-white/5 aspect-3/4"
               >
                 <div className="absolute inset-0 bg-zinc-800" /> {/* Fallback bg */}
                 <img 
@@ -324,7 +315,7 @@ export default function HeritagePage() {
                     (e.target as HTMLImageElement).style.opacity = '0';
                   }}
                 />
-                <div className="p-6 absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 via-black/30 to-transparent">
+                <div className="p-6 absolute bottom-0 left-0 w-full bg-linear-to-t from-black/60 via-black/30 to-transparent">
                   <h3 className="text-xl font-bold text-white mb-1">{member.name}</h3>
                   <p className="text-sm text-zinc-300 font-medium">{member.role}</p>
                 </div>

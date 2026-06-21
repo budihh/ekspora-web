@@ -1,11 +1,20 @@
-import { pgTable, uuid, varchar, text, timestamp } from 'drizzle-orm/pg-core';
-import { vector } from 'drizzle-orm/pg-core'; // Requires pgvector extension
+import { pgTable, uuid, text, jsonb } from 'drizzle-orm/pg-core';
+import { customType } from 'drizzle-orm/pg-core';
+import { products } from './products';
 
-export const knowledgeEmbeddings = pgTable('knowledge_embeddings', {
+const vector = customType<{ data: number[]; driverData: string }>({
+  dataType() {
+    return 'vector(3072)';
+  },
+  toDriver(value: number[]): string {
+    return JSON.stringify(value);
+  },
+});
+
+export const productEmbeddings = pgTable('product_embeddings', {
   id: uuid('id').defaultRandom().primaryKey(),
-  entityType: varchar('entity_type', { length: 30 }).notNull(), // 'product' | 'category' | 'company'
-  entityId: uuid('entity_id').notNull(),
-  embedding: vector('embedding', { dimensions: 1536 }).notNull(),
+  productId: uuid('product_id').references(() => products.id, { onDelete: 'cascade' }),
   content: text('content').notNull(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+  metadata: jsonb('metadata'),
+  embedding: vector('embedding'),
 });

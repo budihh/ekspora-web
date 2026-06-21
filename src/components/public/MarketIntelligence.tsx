@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, Thermometer, Flame, Globe2, ArrowRight } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import Link from "next/link";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer,
   AreaChart, Area, RadialBarChart, RadialBar, LineChart, Line, Cell, ReferenceArea, ReferenceLine, CartesianGrid, ComposedChart
@@ -125,7 +126,7 @@ export default function MarketIntelligence() {
   const activeTab = TABS.find((t) => t.id === activeTabId) || TABS[0];
 
   return (
-    <section className="relative w-full bg-neutral-950 py-24 lg:py-32 overflow-hidden">
+    <section className="relative w-full bg-black py-24 lg:py-32 overflow-hidden">
       {/* Ambient Glow */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center">
         <motion.div
@@ -134,7 +135,7 @@ export default function MarketIntelligence() {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1, ease: "easeInOut" as any }}
-          className={cn("w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] rounded-full blur-[120px] mix-blend-screen opacity-40 transition-colors duration-1000", activeTab.glowClass)}
+          className={cn("w-[30rem] h-[30rem] max-w-[600px] max-h-[600px] rounded-full blur-[80px] mix-blend-screen opacity-30 transition-colors duration-1000", activeTab.glowClass)}
         />
       </div>
 
@@ -214,12 +215,12 @@ export default function MarketIntelligence() {
 
             {/* CTA */}
             <div className="mt-8 pl-6">
-              <a href="#" className="inline-flex items-center gap-3 text-white font-medium group transition-all">
+              <Link href="/insights" className="inline-flex items-center gap-3 text-white font-medium group transition-all">
                 Access Full Insights
                 <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
-              </a>
+              </Link>
             </div>
           </div>
 

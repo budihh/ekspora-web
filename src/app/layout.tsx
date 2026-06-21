@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import ChatWidget from "@/components/ui/ChatWidget";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Ekspora — Indonesian Premium Export Commodities",
@@ -21,6 +23,8 @@ export default function RootLayout({
       </head>
       <body className="antialiased font-sans">
         {children}
+        <ChatWidget />
+        <Toaster richColors position="top-right" theme="dark" />
       </body>
     </html>
   );
